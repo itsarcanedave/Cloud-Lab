@@ -1,0 +1,18 @@
+# Example 2
+#
+# Single box with VirtualBox provider.
+# VirtualBox modifyvm docs: http://www.virtualbox.org/manual/ch08.html#vboxmanage-modifyvm
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.hostname = "Example2"
+  config.vm.network "private_network", ip: "192.168.0.42"
+
+  config.vm.provider :virtualbox do |vb|
+    vb.customize [
+      "modifyvm", :id,
+      "--cpuexecutioncap", "50",
+      "--memory", "256",
+    ]
+  end
+end

@@ -1,0 +1,52 @@
+# A slight modification of Example 5. Features three VMs: Webserver, Load Balancer, Database. Introduces shell provisioning method.
+
+Vagrant.configure("2") do |config|
+if Vagrant.has_plugin?("vagrant-vbguest")
+    config.vbguest.auto_update = false
+  end
+  config.vm.define "vm1" do |vm1|
+    vm1.vm.box = "ubuntu/focal64"
+    #vm1.vm.box = "generic/ubuntu1804"
+    vm1.vm.hostname = 'WEB1'
+    vm1.vm.network :private_network, ip: "192.168.56.101", auto_correct: true
+    vm1.vm.network :forwarded_port, guest: 80, host: 8090, id: "web", auto_correct: true
+
+	vm1.vm.provision "ansible_local" do |ansible|
+    	ansible.verbose = "v"
+    	ansible.playbook = "web.yml"
+  	end
+    
+
+  end
+  
+   config.vm.define "vm2" do |vm2|
+    vm2.vm.box = "ubuntu/focal64"
+     #vm2.vm.box = "generic/ubuntu1804"
+    vm2.vm.hostname = 'WEB2'
+    vm2.vm.network :private_network, ip: "192.168.56.102", auto_correct: true
+    vm2.vm.network :forwarded_port, guest: 80, host: 8091, id: "web", auto_correct: true
+
+
+    	vm2.vm.provision "ansible_local" do |ansible|
+    	ansible.verbose = "v"
+    	ansible.playbook = "web.yml"
+  	end
+  end
+
+ config.vm.define "vm3" do |vm3|
+    vm3.vm.box = "ubuntu/focal64"
+    #vm3.vm.box = "generic/ubuntu1804"
+    vm3.vm.hostname = 'LB'
+    vm3.vm.network :private_network, ip: "192.168.56.103", auto_correct: true
+    vm3.vm.network :forwarded_port, guest: 80, host: 8092, id: "lb", auto_correct: true
+
+ 
+    
+    	vm3.vm.provision "ansible_local" do |ansible|
+    	ansible.verbose = "v"
+    	ansible.playbook = "lb.yml"
+  	end
+   
+  end
+
+end

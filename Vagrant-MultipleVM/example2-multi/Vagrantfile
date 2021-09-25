@@ -1,0 +1,29 @@
+# Slight modification of Example 2 to support Multiple VMs
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define "vm1" do |vm1|
+    vm1.vm.box = "ubuntu/focal64"
+    vm1.vm.hostname = 'VM1'
+    vm1.vm.network :private_network, ip: "192.168.56.101"
+
+    vm1.vm.provider :virtualbox do |vb1|
+      vb1.customize ["modifyvm", :id,  "--cpuexecutioncap", "50"]
+      vb1.customize ["modifyvm", :id,  "--memory", "256",]
+    
+    end
+  end
+  
+   config.vm.define "vm2" do |vm2|
+    vm2.vm.box = "ubuntu/focal64"
+    vm2.vm.hostname = 'VM2'
+    vm2.vm.network :private_network, ip: "192.168.56.102"
+
+    vm2.vm.provider :virtualbox do |vb2|
+      vb2.customize ["modifyvm", :id,  "--cpuexecutioncap", "50"]
+      vb2.customize ["modifyvm", :id,  "--memory", "512",]
+    
+    end
+  end
+
+end
